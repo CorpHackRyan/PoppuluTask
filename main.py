@@ -3,6 +3,7 @@ import os
 from os import path
 from datetime import datetime
 import pandas as pd  # pandas module for ease of use to navigate individual column data in csv files
+import base64
 
 poppulo_csv_file = "poppulo_techtask.csv"
 
@@ -93,6 +94,7 @@ except OSError as file_error:
 try:
     master_XML_filename = "master.xml"
     out_file = open(master_XML_filename, "+w")
+    csv_readfile = pd.read_csv(poppulo_csv_file)
     delimiter = ","
 
     out_file.write("<subscriber_import_job>\n")
@@ -112,11 +114,15 @@ try:
     out_file.write("\t\t<field_separator>comma</field_separator>\n")
     out_file.write("\t\t<data>\n")
 
+    # Using the headers previously extracted from question #3
     out_file.write("\t\t\t" + delimiter.join(header_row_from_csv) + "\n")
-    out_file.write("\t\t\txyz@newsweaver.ie,Roycroft,George,Finance,Ireland\n")
-    out_file.write("\t\t\thsdafgj@newsweaver.co.uk,Wolfenstein,Peter,Marketing,France\n")
 
-
+    # Write data to master_XML_filename ('master.xml') from csv_readfile ('poppulu_techtask.csv')
+    with open(poppulo_csv_file, 'r') as readonly_poppulu_data:
+        csv_reader = csv.reader(readonly_poppulu_data)
+        header = next(readonly_poppulu_data)  # Skip the header
+        for each_row in csv_reader:
+            out_file.write("\t\t\t" + delimiter.join(each_row) + "\n")
 
     out_file.write("\t\t</data>\n")
     out_file.write("\t</subscriber_data>\n")
@@ -124,3 +130,20 @@ try:
 
 except OSError as file_error:
     print(file_error)
+
+
+#######################################################################################################
+#   7. Generate a separate 'Child' XML file per 'Department' value, using the created CSV             #
+#   files (see point 5 above), named 'departmentValue.xml', using the XML template                    #
+#   seen below.                                                                                       #
+#######################################################################################################
+
+message = "RW1haWwsU3VybmFtZSxGaXJzdE5hbWUsRGVwYXJ0bWVudCxDb3VudHJ5CmVtYWlsMSxTdXJuYW1lMSxGaXJzdG5hbWUxLFNhbGVzLElyZWxhbmQKZW1haWwyLFN1cm5hbWUyLEZpcnN0bmFtZTIsRmluYW5jZSxVSwplbWFpbDMsU3VybmFtZTMsRmlyc3RuYW1lMyxTYWxlcyxGcmFuY2UKZW1haWw0LFN1cm5hbWU0LEZpcnN0bmFtZTQsRW5naW5lZXJpbmcsR2VybWFueQplbWFpbDUsU3VybmFtZTUsRmlyc3RuYW1lNSxNYXJrZXRpbmcsVVNBCmVtYWlsNixTdXJuYW1lNixGaXJzdG5hbWU2LEZpbmFuY2UsSXJlbGFuZAplbWFpbDcsU3VybmFtZTcsRmlyc3RuYW1lNyxTYWxlcyxVSwplbWFpbDgsU3VybmFtZTgsRmlyc3RuYW1lOCxFbmdpbmVlcmluZyxGcmFuY2UKZW1haWw5LFN1cm5hbWU5LEZpcnN0bmFtZTksTWFya2V0aW5nLEdlcm1hbnkKZW1haWwxMCxTdXJuYW1lMTAsRmlyc3RuYW1lMTAsRmluYW5jZSxVU0EKZW1haWwxMSxTdXJuYW1lMTEsRmlyc3RuYW1lMTEsTWFya2V0aW5nLElyZWxhbmQKZW1haWwxMixTdXJuYW1lMTIsRmlyc3RuYW1lMTIsRW5naW5lZXJpbmcsVUsKZW1haWwxMyxTdXJuYW1lMTMsRmlyc3RuYW1lMTMsTWFya2V0aW5nLEZyYW5jZQplbWFpbDE0LFN1cm5hbWUxNCxGaXJzdG5hbWUxNCxNYXJrZXRpbmcsR2VybWFueQplbWFpbDE1LFN1cm5hbWUxNSxGaXJzdG5hbWUxNSxGaW5hbmNlLFVTQQplbWFpbDE2LFN1cm5hbWUxNixGaXJzdG5hbWUxNixTYWxlcyxJcmVsYW5kCmVtYWlsMTcsU3VybmFtZTE3LEZpcnN0bmFtZTE3LEVuZ2luZWVyaW5nLFVLCmVtYWlsMTgsU3VybmFtZTE4LEZpcnN0bmFtZTE4LE1hcmtldGluZyxGcmFuY2UKZW1haWwxOSxTdXJuYW1lMTksRmlyc3RuYW1lMTksRmluYW5jZSxHZXJtYW55CmVtYWlsMjAsU3VybmFtZTIwLEZpcnN0bmFtZTIwLFNhbGVzLFVTQQplbWFpbDIxLFN1cm5hbWUyMSxGaXJzdG5hbWUyMSxFbmdpbmVlcmluZyxJcmVsYW5kCmVtYWlsMjIsU3VybmFtZTIyLEZpcnN0bmFtZTIyLE1hcmtldGluZyxVSwplbWFpbDIzLFN1cm5hbWUyMyxGaXJzdG5hbWUyMyxGaW5hbmNlLEZyYW5jZQplbWFpbDI0LFN1cm5hbWUyNCxGaXJzdG5hbWUyNCxTYWxlcyxHZXJtYW55CmVtYWlsMjUsU3VybmFtZTI1LEZpcnN0bmFtZTI1LEVuZ2luZWVyaW5nLFVTQQplbWFpbDI2LFN1cm5hbWUyNixGaXJzdG5hbWUyNixNYXJrZXRpbmcsSXJlbGFuZAplbWFpbDI3LFN1cm5hbWUyNyxGaXJzdG5hbWUyNyxNYXJrZXRpbmcsVUsKZW1haWwyOCxTdXJuYW1lMjgsRmlyc3RuYW1lMjgsRmluYW5jZSxGcmFuY2UKZW1haWwyOSxTdXJuYW1lMjksRmlyc3RuYW1lMjksU2FsZXMsR2VybWFueQplbWFpbDMwLFN1cm5hbWUzMCxGaXJzdG5hbWUzMCxFbmdpbmVlcmluZyxVU0EKZW1haWwzMSxTdXJuYW1lMzEsRmlyc3RuYW1lMzEsTWFya2V0aW5nLElyZWxhbmQKZW1haWwzMixTdXJuYW1lMzIsRmlyc3RuYW1lMzIsRmluYW5jZSxVSwplbWFpbDMzLFN1cm5hbWUzMyxGaXJzdG5hbWUzMyxTYWxlcyxGcmFuY2UKZW1haWwzNCxTdXJuYW1lMzQsRmlyc3RuYW1lMzQsRW5naW5lZXJpbmcsR2VybWFueQplbWFpbDM1LFN1cm5hbWUzNSxGaXJzdG5hbWUzNSxNYXJrZXRpbmcsVVNBCmVtYWlsMzYsU3VybmFtZTM2LEZpcnN0bmFtZTM2LEZpbmFuY2UsSXJlbGFuZAplbWFpbDM3LFN1cm5hbWUzNyxGaXJzdG5hbWUzNyxTYWxlcyxVSwplbWFpbDM4LFN1cm5hbWUzOCxGaXJzdG5hbWUzOCxFbmdpbmVlcmluZyxGcmFuY2UKZW1haWwzOSxTdXJuYW1lMzksRmlyc3RuYW1lMzksTWFya2V0aW5nLEdlcm1hbnkKZW1haWw0MCxTdXJuYW1lNDAsRmlyc3RuYW1lNDAsVGVjaG5pY2FsIFNlcnZpY2VzLFVTQQplbWFpbDQxLFN1cm5hbWU0MSxGaXJzdG5hbWU0MSxGaW5hbmNlLElyZWxhbmQKZW1haWw0MixTdXJuYW1lNDIsRmlyc3RuYW1lNDIsRmluYW5jZSxVSwplbWFpbDQzLFN1cm5hbWU0MyxGaXJzdG5hbWU0MyxFbmdpbmVlcmluZyxGcmFuY2UKZW1haWw0NCxTdXJuYW1lNDQsRmlyc3RuYW1lNDQsTWFya2V0aW5nLEdlcm1hbnkKZW1haWw0NSxTdXJuYW1lNDUsRmlyc3RuYW1lNDUsRmluYW5jZSxVU0EKZW1haWw0NixTdXJuYW1lNDYsRmlyc3RuYW1lNDYsU2FsZXMsSXJlbGFuZAplbWFpbDQ3LFN1cm5hbWU0NyxGaXJzdG5hbWU0NyxFbmdpbmVlcmluZyxVSwplbWFpbDQ4LFN1cm5hbWU0OCxGaXJzdG5hbWU0OCxNYXJrZXRpbmcsRnJhbmNlCmVtYWlsNDksU3VybmFtZTQ5LEZpcnN0bmFtZTQ5LEZpbmFuY2UsR2VybWFueQplbWFpbDUwLFN1cm5hbWU1MCxGaXJzdG5hbWU1MCxTYWxlcyxVU0EK"
+#base64.encode(message)
+message_bytes = base64.b64decode(message)
+print(message_bytes)
+
+
+
+
+
