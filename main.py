@@ -1,9 +1,15 @@
 import csv
 import os
+from os import path
 from datetime import datetime
-import pandas as pd  # Using pandas module for ease of use to  navigate certain columns in csv files
+import pandas as pd  # pandas module for ease of use to navigate individual column data in csv files
 
 poppulo_csv_file = "poppulo_techtask.csv"
+
+if not path.exists(poppulo_csv_file):
+    print(os.getcwd() + "/" + poppulo_csv_file + " does not exist and program cannot proceed.")
+    exit()
+
 
 ####################################################################################################################
 #  2. Programmatically create a subdirectory named year-month-date where YMD is specific to the day program is run #
@@ -43,16 +49,18 @@ except OSError as file_error:
 #     the CSV file 'departmentValue.csv', where departmentValue is the actual Department value itself. #
 ########################################################################################################
 
-# Since there is a lot of files, I decided to move them into their own directory.
-dept_dir_name = "Department"
-
 try:
-    os.mkdir(dept_dir_name)
+    csv_readfile = pd.read_csv(poppulo_csv_file)
+    dept_column = csv_readfile.Department
+    dept_column = set(dept_column)  # Remove all duplicates
 
-except OSError as folder_error:
-    print(folder_error)
+    for each_dept in dept_column:
+        out_file = open(each_dept + ".csv", "w+")
 
-csv_readfile = pd.read_csv(poppulo_csv_file)
-dept_column = csv_readfile.Department
-dept_column = set(dept_column)  # Remove all duplicates
-print(dept_column)
+    print(dept_column)
+
+except OSError as file_error:
+    print(file_error)
+
+
+
