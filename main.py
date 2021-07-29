@@ -19,6 +19,7 @@ dir_name = datetime.today().strftime('%Y-%m-%d')
 try:
     os.mkdir(dir_name)
     print("QUESTION #2:  " + os.getcwd() + "/" + dir_name + " directory was created.")
+
 except OSError as folder_error:
     print(folder_error)
 
@@ -73,10 +74,53 @@ try:
     country_omitted_filename = "no_countries.csv"
     cols_to_use = ["Email", "Surname", "FirstName", "Department"]
     country_omitted = pd.read_csv(poppulo_csv_file, usecols=cols_to_use)
-    country_omitted.to_csv(country_omitted_filename, sep=',', index=False)  # index=False req'd to eliminate prepending a ',' to data set
+
+    # index=False required to eliminate prepending a ',' to the data set
+    country_omitted.to_csv(country_omitted_filename, sep=',', index=False)
 
     print("QUESTION #5:  " + country_omitted_filename + " has been created with the following data")
     print(country_omitted)
+
+except OSError as file_error:
+    print(file_error)
+
+
+#######################################################################################################
+#  6. Generate a 'Master' XML file named 'master.xml', containing all of the data found               #
+#     within the provided CSV file, using the XML template seen below.                                #
+#######################################################################################################
+
+try:
+    master_XML_filename = "master.xml"
+    out_file = open(master_XML_filename, "+w")
+    delimiter = ","
+
+    out_file.write("<subscriber_import_job>\n")
+    out_file.write("\t<accept_terms>true</accept_terms>\n")
+    out_file.write("\t<reactivate_api_removed>false</reactivate_api_removed>\n")
+    out_file.write("\t<reactivate_admin_removed>true</reactivate_admin_removed>\n")
+    out_file.write("\t<reactivate_bounced_removed>false</reactivate_bounced_removed>\n")
+    out_file.write("\t<tags>\n")
+    out_file.write('\t\t<tag name="Some Tag" />\n')
+    out_file.write("\t</tags>\n")
+    out_file.write("\t<subscriber_data>\n")
+
+    # Using the headers previously extracted from question #3
+    out_file.write("\t\t<columns>" + delimiter.join(header_row_from_csv) + "</columns>\n")
+
+    out_file.write("\t\t<skip_first_line>true</skip_first_line>\n")
+    out_file.write("\t\t<field_separator>comma</field_separator>\n")
+    out_file.write("\t\t<data>\n")
+
+    out_file.write("\t\t\t" + delimiter.join(header_row_from_csv) + "\n")
+    out_file.write("\t\t\txyz@newsweaver.ie,Roycroft,George,Finance,Ireland\n")
+    out_file.write("\t\t\thsdafgj@newsweaver.co.uk,Wolfenstein,Peter,Marketing,France\n")
+
+
+
+    out_file.write("\t\t</data>\n")
+    out_file.write("\t</subscriber_data>\n")
+    out_file.write("</subscriber_import_job>\n")
 
 except OSError as file_error:
     print(file_error)
