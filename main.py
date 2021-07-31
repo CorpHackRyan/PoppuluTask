@@ -19,7 +19,7 @@ dir_name = datetime.today().strftime('%Y-%m-%d')
 
 try:
     os.mkdir(dir_name)
-    print("QUESTION #2:  " + os.getcwd() + "/" + dir_name + " directory was created.")
+    print("\nQUESTION #2:  " + os.getcwd() + "/" + dir_name + " directory was created.")
 
 except OSError as folder_error:
     print(folder_error)
@@ -41,7 +41,7 @@ try:
                 else:
                     headers_outfile.write(value + ",")
 
-            print("QUESTION #3:  Header information gathered from: " + poppulo_csv_file + " file was:", header_row_from_csv)
+            print("\nQUESTION #3:  Header information gathered from: " + poppulo_csv_file + " file was:", header_row_from_csv)
 
 except OSError as file_error:
     print(file_error)
@@ -54,30 +54,17 @@ except OSError as file_error:
 delimiter = ","
 
 try:
-    #csv_readfile = pd.read_csv(poppulo_csv_file)
-    #dept_column = csv_readfile.Department
-    #dept_column = set(dept_column)  # Remove all duplicates
-    #for each_dept in dept_column:
-        #out_file = open(each_dept + ".csv", "w+")
-        #print(each_dept)
-
     csv_readfile = pd.read_csv(poppulo_csv_file)
     dept_column = csv_readfile.Department
 
-    for idx, row in csv_readfile.iterrows():
-        with open(row.Department + ".csv", "+a") as out_file:
-            out_file.write(delimiter.join(row) + "\n")
+    for idx, each_row in csv_readfile.iterrows():
+        with open(each_row.Department + ".csv", "+a") as out_file:
+            out_file.write(delimiter.join(each_row) + "\n")
 
+    dept_column = csv_readfile.Department
+    dept_column = set(dept_column)  # Remove all duplicates
+    print("\nQUESTION #4: The following .csv files were created with their corresponding values: " + str(dept_column))
 
-    #print(csv_readfile)
-    #for each_dept in dept_column:
-    #    with open(each_dept + ".csv", "+a") as out_file:
-    #        out_file.write(delimiter.join(csv_readfile) + "\n")
-
-
-
-
-    # print("QUESTION #4:  The following .csv files were created: ", dept_column)
 
 
 except OSError as file_error:
@@ -97,7 +84,7 @@ try:
     # index=False required to eliminate prepending a ',' to the data set
     country_omitted.to_csv(country_omitted_filename, sep=',', index=False)
 
-    print("QUESTION #5:  " + country_omitted_filename + " has been created with the following data")
+    print("\nQUESTION #5: " + country_omitted_filename + " has been created with the following data")
     print(country_omitted)
 
 except OSError as file_error:
