@@ -51,16 +51,34 @@ except OSError as file_error:
 # 4. Generate a separate CSV file per 'Department' value found within the provided CSV file, name     #
 #    the CSV file 'departmentValue.csv', where departmentValue is the actual Department value itself. #
 ########################################################################################################
+delimiter = ","
 
 try:
+    #csv_readfile = pd.read_csv(poppulo_csv_file)
+    #dept_column = csv_readfile.Department
+    #dept_column = set(dept_column)  # Remove all duplicates
+    #for each_dept in dept_column:
+        #out_file = open(each_dept + ".csv", "w+")
+        #print(each_dept)
+
     csv_readfile = pd.read_csv(poppulo_csv_file)
     dept_column = csv_readfile.Department
-    dept_column = set(dept_column)  # Remove all duplicates
 
-    for each_dept in dept_column:
-        out_file = open(each_dept + ".csv", "w+")
+    for idx, row in csv_readfile.iterrows():
+        with open(row.Department + ".csv", "+a") as out_file:
+            out_file.write(delimiter.join(row) + "\n")
 
-    print("QUESTION #4:  The following .csv files were created: ", dept_column)
+
+    #print(csv_readfile)
+    #for each_dept in dept_column:
+    #    with open(each_dept + ".csv", "+a") as out_file:
+    #        out_file.write(delimiter.join(csv_readfile) + "\n")
+
+
+
+
+    # print("QUESTION #4:  The following .csv files were created: ", dept_column)
+
 
 except OSError as file_error:
     print(file_error)
