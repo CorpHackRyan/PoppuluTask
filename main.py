@@ -1,16 +1,22 @@
-# Some other ideas that would take longer to implement could prove useful:
+# After some retrospection, some other ideas that would take longer to implement could prove useful:
 #   a) Break some operations out into functions to pass parameters into.
 #   b) When writing xml template, instead of repeating writing of the same data in different sections,
 #      create a function to do this instead which will some redundancy in code.
 #   c) Check to see if files exist in case and handle accordingly
+#   d) instead of hard coding the columns for countries omitted, we could loop through and check if col is equal
+#      to country and omit.
 
+# In your Technical Task.pdf file, you have submitting "no later than 48 hours" in the first paragraph, and
+# "no later than 24 hours" in the second paragraph.
 
-import csv
-import os
 from os import path
 from datetime import datetime
+import csv
+import os
+import platform
 import pandas as pd            # pandas module for ease of use to navigate individual column data in csv files
 import base64                  # base64 module to encode department csv files and embed into their respective xml files
+import subprocess
 
 poppulo_csv_file = "poppulo_techtask.csv"
 delimiter = ","
@@ -19,10 +25,16 @@ if not path.exists(poppulo_csv_file):
     print(os.getcwd() + "/" + poppulo_csv_file + " does not exist and program cannot proceed.")
     exit()
 
+# If Linux is detected, bash script is executed to clean working folder of old directories/files if they exist
+os_name = platform.system()
+if os_name == "Linux":
+    if path.exists("_cleanup_dir.sh"):
+        subprocess.run("./_cleanup_dir.sh")
 
-####################################################################################################################
-# 2. Programmatically create a subdirectory named year-month-date where YMD is specific to the day program is run #
-####################################################################################################################
+
+#####################################################################################################################
+#  2. Programmatically create a subdirectory named year-month-date where YMD is specific to the day program is run  #
+#####################################################################################################################
 dir_name = datetime.today().strftime('%Y-%m-%d')
 
 try:
@@ -38,7 +50,7 @@ except OSError as folder_error:
 ##################################################################################################
 headers_txt_file = "headers.txt"
 
-# Using the built in csv_reader for python for experimentation versus pandas csv module
+# Using the built in csv_reader for python for experimentation versus the easier to use pandas csv module
 try:
     with open(headers_txt_file, "w+") as headers_outfile:
         with open(poppulo_csv_file, 'r') as csv_readfile:
@@ -107,7 +119,6 @@ try:
     master_XML_filename = "master.xml"
     out_file = open(master_XML_filename, "+w")
     csv_readfile = pd.read_csv(poppulo_csv_file)
-    delimiter = ","
 
     out_file.write("<subscriber_import_job>\n")
     out_file.write("\t<accept_terms>true</accept_terms>\n")
@@ -137,7 +148,7 @@ try:
             out_file.write("\t\t\t" + delimiter.join(each_row) + "\n")
 
     #######################################################################################################
-    # FROM QUESTION 8: embed the master csv file in the xml node section titled 'data'
+    # FROM QUESTION 8.A): embed the master csv file in the xml node section titled 'data'
     #######################################################################################################
     with open(poppulo_csv_file, "rb") as master_csv_data:
         master_csv_encoded = base64.b64encode(master_csv_data.read())
@@ -185,7 +196,7 @@ try:
             out_file.write("\t\t\t" + delimiter.join(header_row_from_csv) + "\n")
 
     #######################################################################################################
-    # FROM QUESTION 8: embed the child csv file in the xml node section titled 'data'
+    # FROM QUESTION 8.B: embed the child csv file in the xml node section titled 'data'
     #######################################################################################################
 
     # Write data to each departmental child xml file from the .csv files generated from question 4
@@ -217,6 +228,10 @@ except OSError as file_error:
 #  8.  When generating the XML files, within the XML node named "data", embed the                     #
 #      'Master' CSV file data or 'Child' CSV file data, as created (see points 7 & 8).                #
 #######################################################################################################
+#          See section 6 for these solutions which are labeled with QUESTION 8.A and 8.B              #
 
 
+#######################################################################################################
+#  9.  Generate a CSV file named "csv_report.csv", containing the below report for example            #
+#######################################################################################################
 
