@@ -137,7 +137,7 @@ try:
             out_file.write("\t\t\t" + delimiter.join(each_row) + "\n")
 
     #######################################################################################################
-    # FROM QUESTION 8: embed the master csv file in the data section
+    # FROM QUESTION 8: embed the master csv file in the xml node section titled 'data'
     #######################################################################################################
     with open(poppulo_csv_file, "rb") as master_csv_data:
         master_csv_encoded = base64.b64encode(master_csv_data.read())
@@ -161,7 +161,7 @@ except OSError as file_error:
 #######################################################################################################
 
 try:
-    # Write out top half of XML template to all department files
+    # Write out top half of XML template to all each child department xml files
     for each_dept in dept_column:
         with open(str(each_dept) + ".xml", "+w") as out_file:
             out_file.write("<subscriber_import_job>\n")
@@ -184,16 +184,24 @@ try:
             # Using the headers previously extracted from question #3
             out_file.write("\t\t\t" + delimiter.join(header_row_from_csv) + "\n")
 
-    # Write data to individual 'child' (departmental) xml files from the .csv files generated from question 4
+    #######################################################################################################
+    # FROM QUESTION 8: embed the child csv file in the xml node section titled 'data'
+    #######################################################################################################
+
+    # Write data to each departmental child xml file from the .csv files generated from question 4
     for each_dept in dept_column:
         csv_readfile = pd.read_csv(str(each_dept) + ".csv", header=None)
         with open(str(each_dept) + ".xml", "+a") as out_file:
             for idx, each_row in csv_readfile.iterrows():
                 out_file.write("\t\t\t" + delimiter.join(each_row) + "\n")
 
-    # Bottom half of template that gets written out to every child xml file, might need to load each one in and append
+    # Encode each child csv file into base64 for embedding in each child xml file
     for each_dept in dept_column:
         with open(str(each_dept) + ".xml", "+a") as out_file:
+            with open(each_dept + ".csv", "rb") as child_csv_data:
+                child_csv_encoded = base64.b64encode(child_csv_data.read())
+                out_file.write("\t\t\t<embed>" + str(child_csv_encoded.decode('utf-8')) + "</embed>\n")
+
             out_file.write("\t\t</data>\n")
             out_file.write("\t</subscriber_data>\n")
             out_file.write("</subscriber_import_job>\n")
@@ -210,7 +218,5 @@ except OSError as file_error:
 #      'Master' CSV file data or 'Child' CSV file data, as created (see points 7 & 8).                #
 #######################################################################################################
 
-# Read in master data in binary, not text; "rb"
-master_csv_data = open(poppulo_csv_file, "rb").read()
-master_csv_encoded = base64.b64encode(master_csv_data)
+
 
