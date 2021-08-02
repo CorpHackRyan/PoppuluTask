@@ -16,5 +16,6 @@ rm 'Sales.xml'
 rm 'Marketing.xml'
 rm 'Finance.xml'
 rm 'Engineering.xml'
+rm 'csv_report.csv'
 
 

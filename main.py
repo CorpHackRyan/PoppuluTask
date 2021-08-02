@@ -228,10 +228,23 @@ except OSError as file_error:
 #  8.  When generating the XML files, within the XML node named "data", embed the                     #
 #      'Master' CSV file data or 'Child' CSV file data, as created (see points 7 & 8).                #
 #######################################################################################################
-#          See section 6 for these solutions which are labeled with QUESTION 8.A and 8.B              #
+#         See section 6  & 7 for these solutions which are labeled with QUESTION 8.A and 8.B          #
 
 
 #######################################################################################################
 #  9.  Generate a CSV file named "csv_report.csv", containing the below report for example            #
 #######################################################################################################
+
+
+report_name = "csv_report.csv"
+header = ['Field Name', 'Percentage Filled', 'Percentage Not Filled', 'Total Values', 'Distinct Values',
+          'Values Not Filled']
+values = [["Email Address", "100.000%", "0.000%", "305584", "305584", "0"],
+          ["First Name", "99.805%", "0.195%", "304987", "64868", "597"]]
+
+with open(report_name, "+w") as csv_writefile:
+    csv_writer = csv.writer(csv_writefile)
+    csv_writer.writerow(header)
+    csv_writer.writerows(values)
+
 
